@@ -133,15 +133,34 @@ class SafetyEngine:
 
         return issues
 
+    def check_contradictions(self, statements: List[str]) -> List[SafetyIssue]:
+        """Detect patient contradictions across consultation dialogue turns."""
+        issues = []
+        combined = " ".join(statements).lower()
+        if ("no fever" in combined or "jwara illa" in combined or "fever illa" in combined) and \
+           ("had fever" in combined or "fever ide" in combined or "temperature 10" in combined or "fever yesterday" in combined):
+            issues.append(SafetyIssue(
+                id="CONTRADICT-FEVER",
+                rule_name="Dialogue Contradiction Detected",
+                severity="medium",
+                category="contradiction",
+                description="Potential conflict in patient dialogue: initial denial of fever conflicts with subsequent mention of fever/temperature.",
+                recommendation="Clarify fever timeline and peak temperature directly with patient before finalizing note."
+            ))
+        return issues
+
     def run_all_checks(
         self,
         consultation_text: str,
         prescribed_meds: List[str],
         known_allergies: List[str],
-        diagnoses: List[str]
+        diagnoses: List[str],
+        dialogue_turns: Optional[List[str]] = None
     ) -> List[SafetyIssue]:
         issues = []
         issues.extend(self.check_drug_allergies(prescribed_meds, known_allergies))
         issues.extend(self.check_red_flags(consultation_text))
         issues.extend(self.check_contraindications(diagnoses, prescribed_meds))
+        if dialogue_turns:
+            issues.extend(self.check_contradictions(dialogue_turns))
         return issues

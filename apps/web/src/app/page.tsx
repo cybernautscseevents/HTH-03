@@ -12,6 +12,7 @@ import { PatientSummaryView } from '@/components/PatientSummaryView';
 import { EvaluationDashboard } from '@/components/EvaluationDashboard';
 import { FHIRExportModal } from '@/components/FHIRExportModal';
 import { PrivacyCenterModal } from '@/components/PrivacyCenterModal';
+import { PatientTimeline } from '@/components/PatientTimeline';
 import { Sparkles, Info, ShieldAlert } from 'lucide-react';
 
 // Pre-seeded high fidelity synthetic consultation data for Indian OPD
@@ -273,6 +274,7 @@ const DEMO_FHIR_BUNDLE = {
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'scribe' | 'timeline' | 'evaluation' | 'privacy'>('scribe');
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('General Medicine');
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isApproved, setIsApproved] = useState<boolean>(false);
@@ -321,6 +323,8 @@ export default function Home() {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        selectedSpecialty={selectedSpecialty}
+        setSelectedSpecialty={setSelectedSpecialty}
         onOpenFHIR={() => setIsFHIROpen(true)}
         onOpenSafety={() => setIsSafetyOpen(true)}
         safetyFlagCount={safetyFlags.length}
@@ -389,10 +393,16 @@ export default function Home() {
                   onApproveNote={() => setIsApproved(true)}
                   onSelectEvidence={handleSelectEvidence}
                   onViewPatientSummary={() => setIsPatientSummaryOpen(true)}
+                  specialty={selectedSpecialty}
                 />
               </div>
             </div>
           </>
+        )}
+
+        {/* Tab Content: Patient Timeline */}
+        {activeTab === 'timeline' && (
+          <PatientTimeline />
         )}
 
         {/* Tab Content: Evaluation Dashboard */}

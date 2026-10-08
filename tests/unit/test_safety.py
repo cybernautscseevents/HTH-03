@@ -43,6 +43,16 @@ class TestSafetyEngine(unittest.TestCase):
         self.assertTrue(len(issues) > 0)
         self.assertEqual(issues[0].severity, "high")
 
+    def test_contradiction_detection(self):
+        statements = [
+            "Patient initially: No fever doctor, just headache.",
+            "Later in consultation: Actually I had fever yesterday night, 101F."
+        ]
+        issues = self.engine.check_contradictions(statements)
+        self.assertTrue(len(issues) > 0)
+        self.assertEqual(issues[0].category, "contradiction")
+        self.assertEqual(issues[0].severity, "medium")
+
 
 if __name__ == "__main__":
     unittest.main()

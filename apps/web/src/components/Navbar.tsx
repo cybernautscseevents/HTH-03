@@ -15,6 +15,8 @@ import {
 interface NavbarProps {
   activeTab: 'scribe' | 'timeline' | 'evaluation' | 'privacy';
   setActiveTab: (tab: 'scribe' | 'timeline' | 'evaluation' | 'privacy') => void;
+  selectedSpecialty?: string;
+  setSelectedSpecialty?: (specialty: string) => void;
   onOpenFHIR: () => void;
   onOpenSafety: () => void;
   safetyFlagCount: number;
@@ -23,6 +25,8 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
+  selectedSpecialty = 'General Medicine',
+  setSelectedSpecialty,
   onOpenFHIR,
   onOpenSafety,
   safetyFlagCount,
@@ -67,6 +71,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <button
+            onClick={() => setActiveTab('timeline')}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              activeTab === 'timeline'
+                ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+            }`}
+          >
+            <FileText className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Patient Timeline</span>
+            <span className="sm:hidden">Timeline</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('evaluation')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeTab === 'evaluation'
@@ -92,6 +109,25 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="sm:hidden">DPDP</span>
           </button>
         </nav>
+
+        {/* Specialty Selector Dropdown */}
+        {setSelectedSpecialty && (
+          <div className="hidden md:flex items-center gap-1.5 px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-xs">
+            <span className="text-[10px] text-slate-500 uppercase font-semibold">Specialty:</span>
+            <select
+              value={selectedSpecialty}
+              onChange={(e) => setSelectedSpecialty(e.target.value)}
+              className="bg-transparent text-slate-200 font-medium text-xs focus:outline-none cursor-pointer"
+            >
+              <option value="General Medicine" className="bg-slate-900 text-slate-200">General Medicine</option>
+              <option value="Pediatrics" className="bg-slate-900 text-slate-200">Pediatrics</option>
+              <option value="Orthopedics" className="bg-slate-900 text-slate-200">Orthopedics</option>
+              <option value="ENT" className="bg-slate-900 text-slate-200">ENT</option>
+              <option value="Dermatology" className="bg-slate-900 text-slate-200">Dermatology</option>
+              <option value="Cardiology" className="bg-slate-900 text-slate-200">Cardiology</option>
+            </select>
+          </div>
+        )}
 
         {/* Quick Actions & Doctor Profile */}
         <div className="flex items-center gap-2 sm:gap-3">
